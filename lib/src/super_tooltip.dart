@@ -57,6 +57,8 @@ class SuperTooltip extends StatefulWidget {
   final bool showDropBoxFilter;
   final double sigmaX;
   final double sigmaY;
+  final bool alwaysShow;
+  final bool disabled;
 
   SuperTooltip({
     Key? key,
@@ -67,8 +69,8 @@ class SuperTooltip extends StatefulWidget {
     this.onShow,
     this.onHide,
     /**
-     * showCloseButton 
-     * This will enable the closeButton 
+     * showCloseButton
+     * This will enable the closeButton
      */
     this.showCloseButton = false,
     this.closeButtonType = CloseButtonType.inside,
@@ -126,6 +128,8 @@ class SuperTooltip extends StatefulWidget {
     this.sigmaY = 5.0,
     this.showDropBoxFilter = false,
     this.hideTooltipOnBarrierTap = true,
+    this.alwaysShow = true,
+    this.disabled = false,
   })  : assert(showDropBoxFilter ? showBarrier ?? false : true,
             'showDropBoxFilter or showBarrier can\'t be false | null'),
         super(key: key);
@@ -173,6 +177,12 @@ class _SuperTooltipState extends State<SuperTooltip>
 
     // TD: Mouse stuff
     super.initState();
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (widget.alwaysShow) {
+        _superTooltipController?.showTooltip();
+      }
+    });
   }
 
   @override
@@ -442,6 +452,7 @@ class _SuperTooltipState extends State<SuperTooltip>
   }
 
   _showTooltip() async {
+    if (widget.disabled) return;
     widget.onShow?.call();
 
     // Already visible.
@@ -463,6 +474,7 @@ class _SuperTooltipState extends State<SuperTooltip>
   }
 
   _hideTooltip() async {
+    if (widget.alwaysShow) return;
     widget.onHide?.call();
     await _animationController
         .reverse()
