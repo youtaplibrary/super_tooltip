@@ -381,6 +381,7 @@ class _SuperTooltipState extends State<SuperTooltip>
                   Material(
                     color: Colors.transparent,
                     child: GestureDetector(
+                      behavior: HitTestBehavior.opaque,
                       onTap: () {
                         if (widget.hideTooltipOnTap)
                           _superTooltipController!.hideTooltip();
